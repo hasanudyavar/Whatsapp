@@ -1,0 +1,299 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp - Educational Clone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@500;600&family=Open+Sans:wght@400&family=Montserrat:wght@500&family=Lora:wght@400&family=Raleway:wght@400;600&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Dark Mode Toggle -->
+  <button class="dark-mode-toggle" aria-label="Toggle dark mode" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+  <!-- Scroll-to-Top Button -->
+  <button class="scroll-to-top" aria-label="Scroll to top" onclick="scrollToTop()">↑</button>
+
+  <!-- Header with Particles -->
+  <header role="banner">
+    <div id="particles-js"></div>
+    <img src="Whatsapp.png" alt="WhatsApp logo">
+    <h1>WhatsApp</h1>
+    <p>Simple. Secure. Reliable messaging.</p>
+  </header>
+
+  <!-- Navigation -->
+  <nav role="navigation">
+    <button class="menu-toggle" aria-label="Toggle navigation menu" onclick="toggleMenu()">☰</button>
+    <ul id="nav-menu">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#privacy">Privacy</a></li>
+      <li><a href="#download">Download</a></li>
+      <li><a href="#business">Business</a></li>
+      <li><a href="#community">Community</a></li>
+      <li><a href="#security">Security</a></li>
+      <li><a href="#help">Help</a></li>
+    </ul>
+  </nav>
+
+  <!-- Home Section -->
+  <section id="home" role="region" aria-labelledby="home-heading">
+    <h1 id="home-heading">Message privately</h1>
+    <p>Connect with friends and family using end-to-end encrypted chats, voice, and video calls.</p>
+    <div class="download-links">
+      <a href="#download" aria-label="Download WhatsApp">Download WhatsApp Now</a>
+    </div>
+    <h2>Why WhatsApp?</h2>
+    <div class="feature-grid">
+      <div class="feature-box">
+        <h3>Private messaging</h3>
+        <p>End-to-end encryption ensures your conversations are secure.</p>
+      </div>
+      <div class="feature-box">
+        <h3>Global connectivity</h3>
+        <p>Send messages, photos, videos, and documents worldwide for free.</p>
+      </div>
+      <div class="feature-box">
+        <h3>Voice and video calls</h3>
+        <p>Enjoy high-quality calls to stay close, no matter where you are.</p>
+      </div>
+      <div class="feature-box">
+        <h3>Business solutions</h3>
+        <p>Engage customers with the WhatsApp Business app or API.</p>
+        <p><a href="#business" aria-label="Learn more about WhatsApp Business">Learn More</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section with Parallax, Gallery, and Video -->
+  <section id="features" class="parallax" role="region" aria-labelledby="features-heading">
+    <h1 id="features-heading">Features</h1>
+    <p>Explore tools that make WhatsApp intuitive, secure, and engaging.</p>
+    <div class="feature-grid">
+      <div class="feature-box">
+        <h3>End-to-end encryption</h3>
+        <p>Your messages, calls, and media are protected.</p>
+      </div>
+      <div class="feature-box">
+        <h3>Group chats</h3>
+        <p>Connect with friends, family, or teams.</p>
+      </div>
+      <div class="feature-box">
+        <h3>Voice messages</h3>
+        <p>Send quick voice notes for a personal touch.</p>
+      </div>
+      <div class="feature-box">
+        <h3>WhatsApp Web and Desktop</h3>
+        <p>Chat seamlessly from your computer.</p>
+      </div>
+      <div class="feature-box">
+        <h3>Status updates</h3>
+        <p>Share photos, videos, and text that disappear after 24 hours.</p>
+      </div>
+      <div class="feature-box">
+        <h3>Stickers and GIFs</h3>
+        <p>Add fun to your chats with expressive stickers and GIFs.</p>
+      </div>
+    </div>
+    <h2>Watch WhatsApp in Action</h2>
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/JVooCcGOyQU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="WhatsApp Features Video"></iframe>
+    </div>
+    <h2>Explore WhatsApp Screenshots</h2>
+    <div class="image-gallery">
+      <div class="gallery-item">
+        <img src="wc.jpg" alt="WhatsApp Chat Interface">
+        <div class="caption">Secure Messaging</div>
+      </div>
+      <div class="gallery-item">
+        <img src="wvc.jpg" alt="WhatsApp Video Call Interface">
+        <div class="caption">Video Calls</div>
+      </div>
+      <div class="gallery-item">
+        <img src="ws.jpg" alt="WhatsApp Status Interface">
+        <div class="caption">Status Updates</div>
+      </div>
+      <div class="gallery-item">
+        <img src="wbp.jpg" alt="WhatsApp Business Profile">
+        <div class="caption">Business Profile</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy Section -->
+  <section id="privacy" role="region" aria-labelledby="privacy-heading">
+    <h1 id="privacy-heading">Privacy</h1>
+    <p>Your privacy is our priority.</p>
+    <div>
+      <h2>Our commitment to privacy</h2>
+      <p>End-to-end encryption ensures only you and the recipient can access your messages and calls.</p>
+      <p>Your messages are not stored on our servers once delivered.</p>
+      <p>Customize settings to manage who sees your profile, status, and last seen.</p>
+      <p><a href="https://www.whatsapp.com/legal/privacy-policy" target="_blank" aria-label="Read WhatsApp Privacy Policy">Read our Privacy Policy</a></p>
+    </div>
+  </section>
+
+  <!-- Download Section with Parallax -->
+  <section id="download" class="parallax" role="region" aria-labelledby="download-heading">
+    <h1 id="download-heading">Download WhatsApp</h1>
+    <p>Get started with WhatsApp on your device today.</p>
+    <div class="download-links">
+      <p>Available for Android, iOS, Mac, Windows, and more.</p>
+      <a href="https://play.google.com/store/apps/details?id=com.whatsapp" target="_blank" aria-label="Download WhatsApp for Android">Download for Android</a>
+      <a href="https://www.apple.com/app-store/" target="_blank" aria-label="Download WhatsApp for iOS">Download for iOS</a>
+      <a href="https://www.whatsapp.com/download" target="_blank" aria-label="Download WhatsApp for Mac or Windows">Download for Mac or Windows PC</a>
+      <a href="https://www.whatsapp.com/download" target="_blank" aria-label="Download WhatsApp for other devices">Other supported devices</a>
+    </div>
+  </section>
+
+  <!-- Business Section with Video -->
+  <section id="business" role="region" aria-labelledby="business-heading">
+    <h1 id="business-heading">WhatsApp Business</h1>
+    <p>Build stronger connections with your customers.</p>
+    <div>
+      <h2>Empower your business</h2>
+      <p>Use the WhatsApp Business app or API to communicate and provide support.</p>
+      <p>Create a professional business profile and showcase products.</p>
+      <p><a href="#download" aria-label="Download WhatsApp Business">Download WhatsApp Business</a></p>
+    </div>
+    <h2>Learn About WhatsApp Business</h2>
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/ou1FcBPohyg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="WhatsApp Features Video"></iframe>
+    </div>
+  </section>
+
+  <!-- Community Section with Parallax and Testimonial Slider -->
+  <section id="community" class="parallax" role="region" aria-labelledby="community-heading">
+    <h1 id="community-heading">Our Community</h1>
+    <p>Join billions of users worldwide who trust WhatsApp.</p>
+    <div class="testimonial-slider">
+      <div class="testimonial-slides" id="testimonial-slides">
+        <div class="testimonial">
+          <p>"WhatsApp keeps me connected with my family across continents!"</p>
+          <h4>Aisha, India</h4>
+        </div>
+        <div class="testimonial">
+          <p>"The Business app transformed how I engage with customers."</p>
+          <h4>Carlos, Brazil</h4>
+        </div>
+        <div class="testimonial">
+          <p>"End-to-end encryption gives me peace of mind."</p>
+          <h4>Emma, UK</h4>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security Section with Video -->
+  <section id="security" role="region" aria-labelledby="security-heading">
+    <h1 id="security-heading">Security</h1>
+    <p>Your safety is at the core of WhatsApp.</p>
+    <div>
+      <h2>Advanced security features</h2>
+      <p>Two-step verification, locked chats, and encrypted backups protect your data.</p>
+      <p>Learn how to stay safe with our security tools.</p>
+      <p><a href="https://faq.whatsapp.com/" target="_blank" aria-label="WhatsApp Security FAQs">Security FAQs</a></p>
+    </div>
+    <h2>Understand Our Security</h2>
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/X07RKOk5hJU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="WhatsApp Features Video"></iframe>
+    </div>
+  </section>
+
+  <!-- Help Section with Contact Form -->
+  <section id="help" role="region" aria-labelledby="help-heading">
+    <h1 id="help-heading">Help Center</h1>
+    <p>Find answers and support for all your WhatsApp needs.</p>
+    <div>
+      <h2>Support when you need it</h2>
+      <p>Explore our FAQs or contact our support team.</p>
+      <p><a href="https://faq.whatsapp.com/" target="_blank" aria-label="WhatsApp FAQs">FAQs</a></p>
+      <p><a href="https://www.whatsapp.com/contact/" target="_blank" aria-label="Contact WhatsApp Support">Contact Support</a></p>
+    </div>
+    <div class="contact-form">
+      <h2>Contact Us</h2>
+      <form id="contact-form" onsubmit="handleFormSubmit(event)">
+        <input type="text" id="name" placeholder="Your Name" required aria-label="Your name">
+        <input type="email" id="email" placeholder="Your Email" required aria-label="Your email">
+        <textarea id="message" placeholder="Your Message" rows="5" required aria-label="Your message"></textarea>
+        <button type="submit" aria-label="Send message">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Live Chat Widget -->
+  <div class="chat-widget" role="complementary">
+    <button class="chat-toggle" aria-label="Open chat widget" onclick="toggleChat()">💬</button>
+    <div class="chat-box" id="chat-box" role="dialog" aria-label="Live chat">
+      <div class="chat-header">
+        <span>WhatsApp Support</span>
+        <button class="close-chat" aria-label="Close chat" onclick="toggleChat()">×</button>
+      </div>
+      <div class="chat-body" id="chat-body">
+        <div class="chat-message bot">Hello! How can I assist you today?</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="chat-input" placeholder="Type a message..." aria-label="Type a chat message">
+        <button onclick="sendChatMessage()" aria-label="Send chat message">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer role="contentinfo">
+    <p>© 2025 WhatsApp Educational Clone. Built for College Project Use Only.</p>
+    <p>
+      <a href="#privacy" aria-label="Privacy Policy">Privacy Policy</a> |
+      <a href="#help" aria-label="Help Center">Help Center</a> |
+      <a href="#download" aria-label="Download">Download</a> |
+      <a href="#business" aria-label="Business">Business</a> |
+      <a href="#community" aria-label="Community">Community</a> |
+      <a href="#security" aria-label="Security">Security</a>
+    </p>
+  </footer>
+
+  <!-- Particles.js Library -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
